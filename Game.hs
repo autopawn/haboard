@@ -108,6 +108,7 @@ execute st players seed = do
 
 loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int
 loop st players (r:rs) = do
+    print "================================================="
     print st
     let moves = movements st
     -- Comprobar si existe ganador
