@@ -16,7 +16,7 @@ boardX = 5
 boardY :: Int
 boardY = 3
 
--- Se hace que FoxAndHounds sea instancia de Game y se definen las funciones necesarias.
+-- Se hace que HareAndHounds sea instancia de Game y se definen las funciones necesarias.
 
 instance Game HareAndHounds where
     current (HareAndHounds c _) = c
@@ -35,7 +35,7 @@ instance Game HareAndHounds where
 
 {-
     pieceMoves genera los movimientos posibles para los dos tipos de piezas del juego.
-    Recibe un FoxAndHounds y una pieza.
+    Recibe un HareAndHounds y una pieza.
     Retorna el un movimiento, consistente de su nombre y el estado que genera.
 -}
 
@@ -59,7 +59,7 @@ pieceMoves (HareAndHounds c pcs) (p,x,y,k) = let
 hareAndHoundsIni :: HareAndHounds
 hareAndHoundsIni = HareAndHounds 0 [(1,4,1,'C'),(0,0,1,'S'),(0,1,0,'S'),(0,1,2,'S')]
 
--- Se define como se transforma un FoxAndHounds a String.
+-- Se define como se transforma un HareAndHounds a String.
 
 instance Show HareAndHounds where
     show (HareAndHounds _ pcs) = let
@@ -70,7 +70,7 @@ instance Show HareAndHounds where
         in drawBoard (boardX,boardY) draw
 
 {-
-    foxAndHoundsEval corresponde a la función de evaluación que usa cpuEval.
+    hareAndHoundsEval corresponde a la función de evaluación que usa cpuEval.
     Recibe un estado del juego.
     Retorna la evaluación del estado.
 -}
@@ -78,7 +78,7 @@ instance Show HareAndHounds where
 hareAndHoundsEval :: HareAndHounds -> Float
 hareAndHoundsEval (HareAndHounds c pcs) = let
     fI = fromIntegral
-    fox@(_,fx,fy,_) = head (filter (\(p,_,_,_) -> p == 0) pcs)
+    hare@(_,fx,fy,_) = head (filter (\(p,_,_,_) -> p == 0) pcs)
     houndsum = sum [if y>=fy then 0.5 else 0.05 * abs (fI x - fI fx) | (p,x,y,k) <- pcs, p==1]
     in (houndsum + 7 - fI fy) * (if c==0 then 1.0 else -1.0)
 
@@ -88,7 +88,7 @@ isInList :: (Eq a) => (a,a) -> [(a,a)] -> Bool
 isInList _ [] = False
 isInList (t1,t2) (x:xs) = if x == (t1,t2) then True else isInList (t1,t2) xs
 
--- diagonalCell restringe los movimientos posibles de los Hounds y Hare, haciendo que no pueda ir de una celda par a otra par.
+-- diagonalCell restringe los movimientos posibles de los Hounds y Hare, haciendo que no pueda ir de una celda par a otra par mediante un movimiento diagonal.
 diagonalCell :: (Integral a,Eq a) => (a,a) -> (a,a) -> Bool
 diagonalCell (xi,yi) (xf,yf) = 
     let suma_inicial = xi+yi
