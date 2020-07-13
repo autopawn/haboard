@@ -65,8 +65,10 @@ playerPieces pcs n = [pc | pc@(p,x,y,k) <- pcs, p==n]
 drawBoard :: (Int,Int) -> ((Int,Int) -> String) -> String
 drawBoard (sizeX,sizeY) drawf = let
     -- Dibujar la primera línea
-    drawLine (-1) = "\t" ++ concatMap (: " ") (take sizeX ['a'..]) ++ "\n"
+    -- concatMap crea una nueva lista con separaciones de " " entre las letras, simulando la primera linea: a b c d e f ... 
+    -- si y = -1, se crea la primera linea (la linea con carácteres, de lo contrario se crean las lienas verticales de numeros)
+    drawLine (-1) = "\t" ++ concatMap (: "\t") (take sizeX ['a'..]) ++ "\n"
     -- Dibujar el resto del tablero
-    drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++ "\n"
+    drawLine (1) = "\n\n\n" ++ show 1 ++ "\t" ++ concat [drawf (x,1) ++ "\t" | x <- [0.. sizeX-1]] ++ "\n\n\n"
+    drawLine y    = "\n\n\n" ++ show y ++ "\t" ++ concat ["\t" ++ drawf (x,y)| x <- [1..sizeX-2]] ++ "\n\n\n"
     in concatMap drawLine [-1..sizeY-1]
-
