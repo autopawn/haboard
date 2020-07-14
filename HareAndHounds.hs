@@ -26,6 +26,8 @@ instance Game HareAndHounds where
         | null mvs                            = Just (1 - c)
         -- Si Hare (p=1) llega a (1,1) , gana
         | any (\(p,x,y,k) -> p==1 && x == 0 && y == 1) pc = Just 1
+        -- Si Hare llega a una posición a la izquierda de todos los Hounds, entonces gana, ya que Hounds no pueden retroceder
+        | any (\(p,x,y,k) -> p==1 && leftSide x pc) pc = Just 1
         -- En todo otro caso se sigue jugando
         | otherwise                           = Nothing
 
@@ -103,6 +105,12 @@ chooseTeam decision name
     | otherwise = error "No se ha seleccionado una opción válida"
     where list2 = [cpuEval "CPU" hareAndHoundsEval, human name]
           list1 = [human name, cpuEval "CPU" hareAndHoundsEval]
+
+leftSide :: Int -> [Piece] -> Bool
+leftSide _ [] = True
+-- Si cualquier Hound está a la izquierda del conejo, entonces retorna False inmediatamente
+leftSide x ((_,x2,_,k):xs) = if  k == 'S' && x2 < x then False else leftSide x xs
+
 -- Main.
 main :: IO Int
 main = do
@@ -121,5 +129,3 @@ main = do
     let result = chooseTeam player_decision nombre
     -- Jugar
     execute hareAndHoundsIni result seed
-
-
