@@ -108,6 +108,7 @@ execute st players seed = do
 
 loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int
 loop st players (r:rs) = do
+    putStrLn "\n=================================================\n"
     print st
     let moves = movements st
     -- Comprobar si existe ganador
@@ -124,3 +125,4 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+

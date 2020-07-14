@@ -64,9 +64,55 @@ playerPieces pcs n = [pc | pc@(p,x,y,k) <- pcs, p==n]
 
 drawBoard :: (Int,Int) -> ((Int,Int) -> String) -> String
 drawBoard (sizeX,sizeY) drawf = let
-    -- Dibujar la primera línea
+    -- si y = -1, se crea la primera linea (la linea con carácteres, de lo contrario se crean las lineas verticales de numeros)
     drawLine (-1) = "\t" ++ concatMap (: " ") (take sizeX ['a'..]) ++ "\n"
-    -- Dibujar el resto del tablero
-    drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++ "\n"
+    drawLine (0) = let
+        drawLine2 (0) = show 0 ++ "\t" ++ "  "
+        drawLine2 (1) = " "
+        drawLine2 (2) = " " ++ drawf(2,0)
+        drawLine2 (3) = "-"
+        drawLine2 (4) = " " ++ drawf(4,0)
+        drawLine2 (5) = "-"
+        drawLine2 (6) = " " ++ drawf(6,0) ++ "\n"
+        in concatMap drawLine2 [0..6]
+    drawLine (1) = let
+        drawLine2 (0) = show 1 ++ "\t" ++ " "
+        drawLine2 (1) = " /"
+        drawLine2 (2) = " |" 
+        drawLine2 (3) = " \\" 
+        drawLine2 (4) = " |" 
+        drawLine2 (5) = " /"
+        drawLine2 (6) = " |" 
+        drawLine2 (7) = " \\\n" 
+        in concatMap drawLine2 [0..7]
+    drawLine (2) = let
+        drawLine2 (0) = show 2 ++ "\t" ++ drawf(0,2)
+        drawLine2 (1) = "-"
+        drawLine2 (2) = " " ++ drawf(2,2)
+        drawLine2 (3) = "-"
+        drawLine2 (4) = " " ++ drawf(4,2)
+        drawLine2 (5) = "-"
+        drawLine2 (6) = " " ++ drawf(6,2)
+        drawLine2 (7) = "-"
+        drawLine2 (8) = " " ++ drawf (8,2) ++ "\n"
+        in concatMap drawLine2 [0..8]
+    drawLine (3) = let
+        drawLine2 (0) = show 3 ++ "\t" ++ " "
+        drawLine2 (1) = " \\"
+        drawLine2 (2) = " |"
+        drawLine2 (3) = " /" 
+        drawLine2 (4) = " |" 
+        drawLine2 (5) = " \\"
+        drawLine2 (6) = " |" 
+        drawLine2 (7) = " /" ++ "\n"
+        in concatMap drawLine2 [0..7]
+    drawLine (4) = let 
+        drawLine2 (0) = show 4 ++ "\t" ++ "  "
+        drawLine2 (1) = " "
+        drawLine2 (2) = " " ++ drawf(2,4)
+        drawLine2 (3) = "-"
+        drawLine2 (4) = " " ++ drawf(4,4)
+        drawLine2 (5) = "-"
+        drawLine2 (6) = " " ++ drawf(6,4) ++ "\n"
+        in concatMap drawLine2 [0..6]
     in concatMap drawLine [-1..sizeY-1]
-
