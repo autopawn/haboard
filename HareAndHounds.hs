@@ -12,9 +12,9 @@ data HareAndHounds = HareAndHounds Int [Piece] -- jugador actual y lista de piez
 -- Se define el tamaño del tablero
 
 boardX :: Int
-boardX = 5
+boardX = 9
 boardY :: Int
-boardY = 3
+boardY = 5
 
 -- Se hace que HareAndHounds sea instancia de Game y se definen las funciones necesarias.
 
@@ -45,13 +45,13 @@ pieceMoves :: HareAndHounds -> Piece -> [(String,HareAndHounds)]
 pieceMoves (HareAndHounds c pcs) (p,x,y,k) = let
     -- Posiciones posibles dependiendo del tipo de pieza
     steps
-        | k=='C'  = [(x+1,y+1),(x+1,y-1),(x+1,y),(x,y-1), (x,y+1),(x-1,y), (x-1,y-1), (x-1,y+1)] -- El conejo puede moverse en todas las direcciones
-        | k=='S'  = [(x+1,y+1),(x+1,y-1),(x+1,y),(x,y-1), (x,y+1)]
+        | k=='C'  = [(x+2,y+2),(x+2,y-2),(x+2,y),(x,y-2), (x,y+2),(x-2,y), (x-2,y-2), (x-2,y+2)] -- El conejo puede moverse en todas las direcciones
+        | k=='S'  = [(x+2,y+2),(x+2,y-2),(x+2,y),(x,y-2), (x,y+2)]
     -- Checkear si es posible moverse a una posición
     isValid (xf,yf) =
-        {- Los valores (0,0), (0,2), (4,0), (4,2) no son válidos, pues serían "celdas vacías", por lo que tenemos que checkear que (xf,yf) no esté en la lista conformada
+        {- Los valores (0,0), (0,4), (8,0), (8,4) no son válidos, pues serían "celdas vacías", por lo que tenemos que checkear que (xf,yf) no esté en la lista conformada
         por esos valores -}
-        pieceAt (xf,yf) pcs == Nothing && 0 <= xf && xf < boardX && 0 <= yf && yf < boardY && isInList (xf,yf) [(0,0), (0,2), (4,0), (4,2)] == False && diagonalCell (x,y) (xf,yf) == False
+        pieceAt (xf,yf) pcs == Nothing && 0 <= xf && xf < boardX && 0 <= yf && yf < boardY && isInList (xf,yf) [(0,0), (0,4), (8,0), (8,4)] == False && diagonalRestriction (x,y) (xf,yf)
     -- Generar los posibles movimientos,
     steps2 = filter isValid steps
     in [(moveName (x,y) (xf,yf), HareAndHounds (1-c) (movePiece (x,y) (xf,yf) pcs)) | (xf,yf) <- steps2]
@@ -59,7 +59,7 @@ pieceMoves (HareAndHounds c pcs) (p,x,y,k) = let
 -- Inicialización del juego.
 
 hareAndHoundsIni :: HareAndHounds
-hareAndHoundsIni = HareAndHounds 0 [(1,4,1,'C'),(0,0,1,'S'),(0,1,0,'S'),(0,1,2,'S')]
+hareAndHoundsIni = HareAndHounds 0 [(1,8,2,'C'),(0,0,2,'S'),(0,2,0,'S'),(0,2,4,'S')]
 
 -- Se define como se transforma un HareAndHounds a String.
 
@@ -84,27 +84,24 @@ hareAndHoundsEval (HareAndHounds c pcs) = let
     houndsum = sum [if y>=fy then 0.5 else 0.05 * abs (fI x - fI fx) | (p,x,y,k) <- pcs, p==1]
     in (houndsum + 7 - fI fy) * (if c==0 then 1.0 else -1.0)
 
-
 -- Función que checkea si una tupla con las posiciones (x,y) está en una lista
 isInList :: (Eq a) => (a,a) -> [(a,a)] -> Bool
 isInList _ [] = False
 isInList (t1,t2) (x:xs) = if x == (t1,t2) then True else isInList (t1,t2) xs
 
--- diagonalCell restringe los movimientos posibles de los Hounds y Hare, haciendo que no pueda ir de una celda par a otra par mediante un movimiento diagonal.
-diagonalCell :: (Integral a,Eq a) => (a,a) -> (a,a) -> Bool
-diagonalCell (xi,yi) (xf,yf) = 
-    let suma_inicial = xi+yi
-        suma_final = xf+yf
-    in suma_inicial `mod` 2 == 0 && suma_final `mod` 2 == 0
+-- diagonalRestriction restringe los movimientos posibles de los Hounds y Hare, haciendo que no puedan ir de ciertas celdas a otras.
+diagonalRestriction :: (Integral a,Eq a) => (a,a) -> (a,a) -> Bool
+diagonalRestriction (xi,yi) (xf,yf) = if filter (==(xi,yi)) list == [] || filter (==(xf,yf)) list == [] then True else False
+    where list = [(2,2),(4,0),(6,2),(4,4)]
 
 -- chooseTeam retorna una lista dependiendo del equipo que elige el jugador en consola.
 chooseTeam :: String -> String -> [Player HareAndHounds]
 chooseTeam decision name
-    | decision == "Hounds" = list1
-    | decision == "Hare" = list2
+    | decision == "Hounds" = hound_decision
+    | decision == "Hare" = hare_decision
     | otherwise = error "No se ha seleccionado una opción válida"
-    where list2 = [cpuEval "CPU" hareAndHoundsEval, human name]
-          list1 = [human name, cpuEval "CPU" hareAndHoundsEval]
+    where hare_decision = [cpuEval "CPU" hareAndHoundsEval, human name]
+          hound_decision = [human name, cpuEval "CPU" hareAndHoundsEval]
 
 leftSide :: Int -> [Piece] -> Bool
 leftSide _ [] = True
@@ -129,3 +126,5 @@ main = do
     let result = chooseTeam player_decision nombre
     -- Jugar
     execute hareAndHoundsIni result seed
+
+
