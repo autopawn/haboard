@@ -17,7 +17,7 @@ type Piece = (Int,Int,Int,Char) -- (jugador, coordenada x, coordenada y, tipo)
     Retorna la lista de piezas actualizada.
 -}
 movePiece :: (Int,Int) -> (Int,Int) -> [Piece] -> [Piece]
-movePiece (xi,yi) (xf,yf) pcs =
+movePiece (xi,yi) (xf,yf) pcs = 
     [if (x,y)==(xi,yi) then (p,xf,yf,k) else (p,x,y,k) | (p,x,y,k) <- pcs]
 
 {-
@@ -60,13 +60,14 @@ playerPieces pcs n = [pc | pc@(p,x,y,k) <- pcs, p==n]
     Recibe el tamaño del tablero y una función que códifica una celda a su 
     caracter correspondiente
     Retorna el String que representa el tablero.
+    Se agregó el display de piezas capturadas
 -}
 
 drawBoard :: (Int,Int) -> ((Int,Int) -> String) -> String
-drawBoard (sizeX,sizeY) drawf = let
+drawBoard (sizeX,sizeY) drawf  = let
     -- Dibujar la primera línea
-    drawLine (-1) = "\t" ++ concatMap (: " ") (take sizeX ['a'..]) ++ "\n"
+    drawLine (-1) = "\t" ++ concatMap (: " ") (take sizeX ['a'..]) ++"\n"
     -- Dibujar el resto del tablero
-    drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++ "\n"
-    in concatMap drawLine [-1..sizeY-1]
+    drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++"\n"
+    in concatMap drawLine [-1..sizeY-1] ++ "\n" ++ "Piezas Capturadas Jugador 0: " ++ concat[drawf(x,10) | x <-[91..120]]++"\n" ++ "Piezas Capturadas Jugador 1: " ++ concat[drawf(x,10) | x <-[51..80]]++"\n"
 
