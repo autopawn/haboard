@@ -21,6 +21,45 @@ movePiece (xi,yi) (xf,yf) pcs =
     [if (x,y)==(xi,yi) then (p,xf,yf,k) else (p,x,y,k) | (p,x,y,k) <- pcs]
 
 {-
+    removePiece sirve para eliminar una pieza.
+    Recibe una posición y la lista de piezas.
+    Retorna la lista de piezas actualizada.
+-}
+
+removePiece :: (Int,Int) -> [Piece] -> [Piece]
+removePiece (px,py) pcs =
+    [(p,x,y,k) | (p,x,y,k) <- pcs, (x,y)/=(px,py)]
+
+{-
+    isInside sirve para saber si una posicion esta dentro del tablero.
+    Recibe dos tuplas de enteros, la primera es una posicion y la segunda es el tamaño del tablero en formato (size_x, size_y).
+    Retorna True en caso de que se encuentre en el tablero, y False en caso contrario.
+-}
+
+isInside :: (Int,Int) -> (Int,Int) -> Bool
+isInside (x,y) (sx,sy) = if (x>=0 && y>=0 && x<sx && y<sy) then True else False
+
+{-
+    playerAt indica de quien es la pieza en una posicion
+    Recibe una lista de piezas y una posicion
+    Retorna el numero del jugador dueño de la pieza, en caso de no haber una pieza, retorna -1.
+-}
+
+playerAt :: [Piece] -> (Int,Int) -> Int
+playerAt pcs (x,y) = case pieceAt (x,y) pcs of
+    Just (j,_,_,_) -> j
+    Nothing        -> -1
+
+{-
+    addQueen añade una reina al tablero y es utilizada en pawn promotion
+    Recibe una lista de piezas y una reina
+    Retorna la lista con la pieza añadida
+-}
+
+addQueen :: [Piece] -> Piece -> [Piece]
+addQueen pcs np = np : pcs
+
+{-
     pieceAt sirve para saber que pieza está en una posición.
     Recibe una posición a checkear y la lista de piezas.
     Retorna una pieza o Nothing en caso de no haber una pieza en la posición consultada.
