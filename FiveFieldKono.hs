@@ -76,8 +76,8 @@ instance Show FiveFieldKono where
             Just (0,_,_,_) -> "⚉ "
             Just (1,_,_,_) -> "⚇ "
             Nothing
-                | inStartPos (x,y) == 0 -> "◡ "
-                | inStartPos (x,y) == 1 -> "◠ "
+                | inStartPos (x,y) == 0 -> "0 "
+                | inStartPos (x,y) == 1 -> "1 "
                 | otherwise             -> "  "
         in drawBoard (boardX,boardY) draw
 
@@ -97,7 +97,7 @@ main = do
     let seed = head (randoms gen)
     putStrLn $ "Seed: " ++ show seed
     -- Crear jugadores
-    let player0 = cpuRand "Walter White"
+    let player0 = human "Walter White"
     let player1 = cpuRand "Jack Black"
     --Jugar
     execute fiveFieldKonoIni [player0,player1] seed

@@ -7,3 +7,8 @@ foxhounds:
 fivefieldkono:
 	mkdir -p bin
 	ghc $(COMMON_SOURCES) FiveFieldKono.hs -o bin/fivefieldkono
+
+damas:
+	mkdir -p bin
+	ghc $(COMMON_SOURCES) Damas.hs -o bin/damas
+
