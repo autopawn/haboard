@@ -72,7 +72,7 @@ cpuRand name = let
 
 -- Índices de los valores más grandes
 argmaxs :: (Ord a) => [a] -> [Int]
-argmaxs xs = [i | (x,i) <- zip xs [0..], x >= maximum xs]
+argmaxs xs = [i | (x,i) <- zip xs [0..], x >=    maximum xs]
 
 cpuEval :: (Game s) => String -> (s -> Float) -> Player s
 cpuEval name eval = let
