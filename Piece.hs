@@ -65,8 +65,12 @@ playerPieces pcs n = [pc | pc@(p,x,y,k) <- pcs, p==n]
 drawBoard :: (Int,Int) -> ((Int,Int) -> String) -> String
 drawBoard (sizeX,sizeY) drawf = let
     -- Dibujar la primera línea
-    drawLine (-1) = "\t" ++ concatMap (: " ") (take sizeX ['a'..]) ++ "\n"
+    drawLine (-1) = "\t" ++ concatMap (: " ") (take (sizeX) ['a'..]) ++ "\n"
     -- Dibujar el resto del tablero
     drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++ "\n"
     in concatMap drawLine [-1..sizeY-1]
 
+-- Pequeño procedimiento para obtener la posición de una pieza desde otro procedimiento
+
+getPos :: Piece -> (Int,Int)
+getPos (_,x,y,_) = (x,y)
