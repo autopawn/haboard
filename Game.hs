@@ -3,7 +3,8 @@
 module Game where
 
 import Data.Maybe (Maybe)
-import System.Random (mkStdGen,randoms)
+import System.Random (mkStdGen,randoms,getStdGen)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -98,6 +99,49 @@ cpuEval name eval = let
     Recibe un Game, una lista de jugadores y un Int que funciona como semilla aleatoria.
     Retorna un IO Int que corresponde al índice del jugador ganador
 -}
+
+
+configAndExecute :: (Show s, Game s) => String -> s -> IO Int
+configAndExecute namegame s = do
+
+    -- Inicialización del generador de números aleatorios
+    gen <- getStdGen
+
+    -- Semilla aleatoria que se usará para el juego
+    let seed = head (randoms gen)
+    putStrLn $ "Seed: " ++ show seed
+
+    -- Crear jugadores Ingresando el nombre del jugador 1
+    putStrLn "\nIngrese el nombre del jugador 1: "
+    juga1 <- getLine
+    
+    --Selecciona el modo que sera el jugador, ya sea humano o del computador
+    putStrLn "\nIngrese el modo del jugador 1: \n(1)cpuRand \n(2)human"
+    modo1 <- getLine
+    let player0 = if(modo1 == "1") 
+                    then (cpuRand juga1) 
+                    else (human juga1)
+
+    -- Crear jugadores Ingresando el nombre del jugador 2
+    putStrLn "\nIngrese el nombre del jugador 2: "
+    juga2 <- getLine
+
+    --Selecciona el modo que sera el jugador, ya sea humano o del computador
+    putStrLn "\nIngrese el modo del jugador 1: \n(1)cpuRand \n(2)human"
+    modo1 <- getLine
+    let player1 = if(modo1 == "1") 
+                    then (cpuRand juga2) 
+                    else (human juga2)
+
+    -- Hacemos un asignacion llamando a la funcion execute
+    sum <- execute s [player0,player1] seed
+
+    -- Agregamos la partida al final de un archivo (si no existe se crea)
+    appendFile ("history - "++ namegame ++".txt") (juga1++" "++juga2++" "++show sum++"\n")
+    return $ sum
+
+
+
 execute :: (Show s, Game s) => s -> [Player s] -> Int -> IO Int
 execute st players seed = do
     -- Generar una lista de números aleatorios

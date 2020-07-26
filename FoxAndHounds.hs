@@ -84,15 +84,5 @@ foxAndHoundsEval (FoxAndHounds c pcs) = let
 
 main :: IO Int
 main = do
-    -- Inicialización del generador de números aleatorios
-    gen <- getStdGen
-    -- Semilla aleatoria que se usará para el juego
-    let seed = head (randoms gen)
-    putStrLn $ "Seed: " ++ show seed
-    -- Crear jugadores
-    let player0 = cpuRand "Son"
-    let player1 = cpuEval "Father" foxAndHoundsEval
-    -- Jugar
-    execute foxAndHoundsIni [player0,player1] seed
-
-
+    --Hace una llamada a la funcion generica configAndExecute para iniciar el juego
+    configAndExecute "foxandhounds" foxAndHoundsIni
