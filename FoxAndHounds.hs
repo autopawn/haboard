@@ -2,7 +2,6 @@
 
 import Game
 import Piece
-
 import System.Random (getStdGen,randoms)
 
 -- Se crea el tipo FoxAndHounds.
@@ -89,7 +88,7 @@ main = do
     -- Semilla aleatoria que se usará para el juego
     let seed = head (randoms gen)
     putStrLn $ "Seed: " ++ show seed
-    -- Crear jugadores con la función pedida.
+    -- Crear jugadores con la función pedida. Aquí mismo se inializa el juego.
     configAndExecute foxAndHoundsIni seed
 
 

@@ -105,7 +105,7 @@ playerType lt
 
 {-
     loser recibe un Int que es el índice del jugador ganador, 
-    y entrega el índice del jugador perdedor. 
+    y entrega el índice del jugador perdedor.
 -}
 loser :: Int -> Int
 loser x = if x == 0 then 1 else 0
