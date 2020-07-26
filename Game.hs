@@ -91,6 +91,42 @@ cpuEval name eval = let
 
 ------------------------------------------
 
+{- 
+    playerType verifica el tipo de jugador ingresado por input y
+    entra la función correspondiente.
+-}
+playerType :: [String] -> Maybe (Player s)
+playerType lt 
+    | lt !! 0 == "humano"    = Just $ human (lt !! 1)   
+    | lt !! 0 == "cpuRandom" = Just $ cpuRand (lt !! 1)
+    --  lt !! 0 == "cpuEval"   = Just $ cpuEval (lt !! 1) foxAndHoundsEval ¿Cómo llamo esta función? 
+    | otherwise = Nothing
+
+{- 
+    configAndExecute es la funcion genérica que le permite al usuario seleccionar
+    qué tipo de jugadores van a jugar de entre las opciones disponibles human y cpuEval
+    dadas como argumento; y también consulta los nombres que se le darán a los jugadores seleccionados.
+    Recibe s que es el estado del juego, debe ser de clase Show y Game.
+    Recibe un Int que es la semilla aleatoria.
+    Entrega un Int que es el índice del jugador que ganó.
+-}
+configAndExecute :: (Show s, Game s) => s -> Int -> IO Int
+configAndExecute st0 seed0 = do
+    putStrLn "Ingrese los usuarios que van a jugar.\nLas opciones son: humano y cpuRandom.\nEl formato de ingreso es: <tipo jugador0> <nombre jugador0> <tipo jugador1> <nombre jugador1> <archivo partidas>"
+    --Input en el formato descrito.
+    players0 <- getLine --players0 es una String. 
+    let ltplayers = (words players0) --ltplayers es una lista: [<tipo jugador0> , <nombre jugador0> , ...]
+    -- Se separa la lista en ambos jugadores.
+    let ltplayer0 = [ltplayers !! 0, ltplayers !! 1]
+    let ltplayer1 = [ltplayers !! 2, ltplayers !! 3]
+    let namefile = ltplayers !! 4
+    case (playerType ltplayer0) of
+        Just player0 -> case (playerType ltplayer1) of
+            --En caso que ambos jugadores fueran ingresados correctamente, se llama a la función execute.
+            Just player1 -> execute st0 [player0,player1] seed0                
+            Nothing -> putStrLn "Ingreso incorrecto jugador 1." >> return (-1) 
+        Nothing -> putStrLn "Ingreso incorrecto jugador 0." >> return (-1)
+    --Los return son necesarios dado que la función debe entregar un IO Int. 
 
 {-
     execute es la función que corre el juego.
@@ -117,6 +153,7 @@ loop st players (r:rs) = do
             -- Terminar el juego
             let (Player name _) = players !! n
             putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            -- agregar la linea al archivo
             return n
         Nothing -> do
             -- Continuar jugando
