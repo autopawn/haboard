@@ -3,6 +3,7 @@
 module Game where
 
 import Data.Maybe (Maybe)
+import System.IO
 import System.Random (mkStdGen,randoms)
 
 {- 
@@ -112,18 +113,17 @@ playerType lt
 -}
 configAndExecute :: (Show s, Game s) => s -> Int -> IO Int
 configAndExecute st0 seed0 = do
-    putStrLn "Ingrese los usuarios que van a jugar.\nLas opciones son: humano y cpuRandom.\nEl formato de ingreso es: <tipo jugador0> <nombre jugador0> <tipo jugador1> <nombre jugador1> <archivo partidas>"
+    putStrLn "Ingrese los usuarios que van a jugar.\nLas opciones son: humano y cpuRandom.\nEl formato de ingreso es: <tipo jugador0> <nombre jugador0> <tipo jugador1> <nombre jugador1>"
     --Input en el formato descrito.
     players0 <- getLine --players0 es una String. 
     let ltplayers = (words players0) --ltplayers es una lista: [<tipo jugador0> , <nombre jugador0> , ...]
     -- Se separa la lista en ambos jugadores.
     let ltplayer0 = [ltplayers !! 0, ltplayers !! 1]
     let ltplayer1 = [ltplayers !! 2, ltplayers !! 3]
-    let namefile = ltplayers !! 4
     case (playerType ltplayer0) of
         Just player0 -> case (playerType ltplayer1) of
             --En caso que ambos jugadores fueran ingresados correctamente, se llama a la función execute.
-            Just player1 -> execute st0 [player0,player1] seed0                
+            Just player1 -> execute st0 [player0,player1] seed0      
             Nothing -> putStrLn "Ingreso incorrecto jugador 1." >> return (-1) 
         Nothing -> putStrLn "Ingreso incorrecto jugador 0." >> return (-1)
     --Los return son necesarios dado que la función debe entregar un IO Int. 
@@ -154,6 +154,9 @@ loop st players (r:rs) = do
             let (Player name _) = players !! n
             putStrLn $ "Jugador"++show n++" "++name++" ganó!"
             -- agregar la linea al archivo
+            putStrLn "Ingrese el nombre del archivo donde guardará el resultado:  " 
+            namefile <- getLine --namefile es el String con el nombre del archivo que el usuario escribió.
+            appendFile namefile $ "Jugador"++show n++" "++name++" ganó!" -- se agrega correctamente esta línea.
             return n
         Nothing -> do
             -- Continuar jugando
