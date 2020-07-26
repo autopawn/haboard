@@ -100,8 +100,15 @@ playerType :: [String] -> Maybe (Player s)
 playerType lt 
     | lt !! 0 == "humano"    = Just $ human (lt !! 1)   
     | lt !! 0 == "cpuRandom" = Just $ cpuRand (lt !! 1)
-    --  lt !! 0 == "cpuEval"   = Just $ cpuEval (lt !! 1) foxAndHoundsEval ¿Cómo llamo esta función? 
+    --  lt !! 0 == "cpuEval"   = Just $ cpuEval (lt !! 1) foxAndHoundsEval  --No sirve
     | otherwise = Nothing
+
+{-
+    loser recibe un Int que es el índice del jugador ganador, 
+    y entrega el índice del jugador perdedor. 
+-}
+loser :: Int -> Int
+loser x = if x == 0 then 1 else 0
 
 {- 
     configAndExecute es la funcion genérica que le permite al usuario seleccionar
@@ -123,10 +130,11 @@ configAndExecute st0 seed0 = do
     case (playerType ltplayer0) of
         Just player0 -> case (playerType ltplayer1) of
             --En caso que ambos jugadores fueran ingresados correctamente, se llama a la función execute.
-            Just player1 -> execute st0 [player0,player1] seed0      
+            Just player1 -> execute st0 [player0,player1] seed0     
             Nothing -> putStrLn "Ingreso incorrecto jugador 1." >> return (-1) 
         Nothing -> putStrLn "Ingreso incorrecto jugador 0." >> return (-1)
-    --Los return son necesarios dado que la función debe entregar un IO Int. 
+    --Los return son necesarios dado que la función debe entregar un IO Int.
+  
 
 {-
     execute es la función que corre el juego.
@@ -140,7 +148,7 @@ execute st players seed = do
     let gen   = mkStdGen seed
     let rands = randoms gen
     -- Ejecutar el loop del juego
-    loop st players rands
+    loop st players rands 
 
 loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int
 loop st players (r:rs) = do
@@ -151,12 +159,16 @@ loop st players (r:rs) = do
     case win of
         Just n -> do
             -- Terminar el juego
-            let (Player name _) = players !! n
-            putStrLn $ "Jugador"++show n++" "++name++" ganó!"
-            -- agregar la linea al archivo
+            let (Player name _) = players !! n -- name es el nombre del jugador ganador.
+            putStrLn $ "Jugador "++show n++" "++name++" ganó!"            
+            -- obtener el indice del jugador perdedor.
+            let loserPlayer = loser n 
+            let(Player name2 _) = players !! loserPlayer -- name2 es el nombre del jugador perdedor.            
+            --Expliación de pprqué hacer el input aquí en el README.     
             putStrLn "Ingrese el nombre del archivo donde guardará el resultado:  " 
             namefile <- getLine --namefile es el String con el nombre del archivo que el usuario escribió.
-            appendFile namefile $ "Jugador"++show n++" "++name++" ganó!" -- se agrega correctamente esta línea.
+            --Agregar línea al archivo con el formato: <nombre_J1> <nombre_J2> <jugador_ganador>
+            appendFile namefile $ name++" "++name2++" "++name  
             return n
         Nothing -> do
             -- Continuar jugando
@@ -164,3 +176,4 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
