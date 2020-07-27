@@ -5,11 +5,13 @@ import Piece
 import System.Random (getStdGen,randoms)
 
 data HareAndHounds = HareAndHounds Int [Piece]
+--se asigna el tamaño del tablero
 boardX :: Int
 boardX = 5
 boardY :: Int
 boardY = 9
-tablero :: (Int,Int)-> Int
+-- funcion tablero para el dibujo de las posiciones posibles de las fichas y movimientos de estas
+tablero :: (Int,Int)-> Int 
 tablero (x,y)
     |y==0 && x==0 = 1
     |y==0 && x==1 = 1
@@ -29,7 +31,7 @@ tablero (x,y)
     |y `mod` 2==1 = 2
     |otherwise    = 0
 
-grafo :: (Int,Int)-> Int
+grafo :: (Int,Int)-> Int -- funcion para poder hacer el tablero como un grafo
 grafo (x,y)
     |tablero(x+1,y)==0 && tablero(x-1,y)==0     = 1
     |tablero(x,y+1)==0 && tablero(x,y-1)==0     = 2
@@ -75,7 +77,7 @@ instance Show HareAndHounds where
         draw (x,y) = case pieceAt (x,y) pcs of
             Just (_,_,_,'H') -> "H "
             Just (_,_,_,'F') -> "F "
-            Nothing          
+            Nothing          --se dibuja el tablero
                 |tablero (x,y)== 1 ->"  "
                 |tablero (x,y)== 0 ->"■ "
                 |grafo(x,y)== 1    ->"- "
