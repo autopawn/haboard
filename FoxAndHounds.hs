@@ -64,7 +64,9 @@ instance Show FoxAndHounds where
         draw (x,y) = case pieceAt (x,y) pcs of
             Just (_,_,_,'H') -> "🄷 "
             Just (_,_,_,'F') -> "🄵 "
-            Nothing          -> if (x+y) `mod` 2 == 0 then "■ " else "□ "
+            Nothing
+                |(x==0) 
+                |if (x+y) `mod` 2 == 0 then "■ " else "□ "
         in drawBoard (boardX,boardY) draw
 
 {-
