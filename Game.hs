@@ -115,8 +115,10 @@ loop st players (r:rs) = do
     case win of
         Just n -> do
             -- Terminar el juego
+            {- Modificación: Ya que solo es un jugador, entonces si gana el jugador 0, es como que uno ganó.
+               Caso contrario, gana el jugador uno y entrega el mensaje de derrota -}
             let (Player name _) = players !! n
-            putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            if n == 0 then putStrLn $ "Has ganado!" else putStrLn $ "Has perdido!"
             return n
         Nothing -> do
             -- Continuar jugando

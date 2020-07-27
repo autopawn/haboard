@@ -15,10 +15,13 @@ type Piece = (Int,Int,Int,Char) -- (jugador, coordenada x, coordenada y, tipo)
     movePiece sirve para cambiar la posición de una pieza.
     Recibe una posición inicial, una posicipon final y la lista de piezas.
     Retorna la lista de piezas actualizada.
+    Modificación: Se agregó la condición de que la pieza en medio de la posición inicial y final se elimine, que es parte del funcionamiento
+    del PegSolitaire.
 -}
 movePiece :: (Int,Int) -> (Int,Int) -> [Piece] -> [Piece]
 movePiece (xi,yi) (xf,yf) pcs =
-    [if (x,y)==(xi,yi) then (p,xf,yf,k) else (p,x,y,k) | (p,x,y,k) <- pcs]
+    [if (x,y)==(xi,yi) then (p,xf,yf,k) else (p,x,y,k) | (p,x,y,k) <- pcs, (x,y)/=((xi+xf)`div`2,(yi+yf)`div`2)]
+
 
 {-
     pieceAt sirve para saber que pieza está en una posición.
