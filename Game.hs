@@ -124,3 +124,37 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
+choose_player:: String -> String -> String -> String -> [Player s]
+choose_player type1 nombre type2 nombre1
+    |type1 == "human" && type2 == "human" = humanos
+    |type1 == "cpu" && type2 == "human" = cpuh
+    |type1 == "human" && type2 == "cpu" = hcpu
+    |type1 == "cpu" && type2 == "cpu" = cpuvscpu
+    where humanos = [human nombre, human nombre1]
+          cpuh = [cpuRand nombre, human nombre1]
+          hcpu = [human nombre, cpuRand nombre1]
+          cpuvscpu = [cpuRand nombre, cpuRand nombre1]
+
+
+configAndExecute:: (Show s, Game s) => s -> Int -> String -> IO Int
+configAndExecute game seed gamename= do
+    putStrLn "ingrese tipo de jugador 1:"
+    putStrLn "human, cpu \n"
+    type0 <- getLine
+    putStrLn "ingrese nombre jugador 1:"
+    name0 <- getLine
+    putStrLn "ingrese tipo de jugador 2:"
+    putStrLn "human, cpu \n"
+    type1 <- getLine
+    putStrLn "ingrese nombre jugador 2:"
+    name1 <- getLine
+    let players = choose_player type0 name0 type1 name1
+    win <- execute game players seed
+    let (Player name _) = players !! win
+    let (Player player1 _) = players !! 0
+    let (Player player2 _) = players !! 1
+    --se crea el archivo si no existe y se agrega el resultado de la partida
+    appendFile (gamename++".txt") (player1++" "++player2++" "++name++"\n")
+    return win
+
