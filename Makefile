@@ -10,4 +10,4 @@ fivefieldkono:
 
 harehounds:
 	mkdir -p bin
-	ghc $(COMMON_SOURCES) HareAndHounds.hs -o bin/HareAndHounds
+	ghc $(COMMON_SOURCES) HareAndHounds2.hs -o bin/HareAndHounds
