@@ -97,7 +97,10 @@ main = do
     let seed = head (randoms gen)
     putStrLn $ "Seed: " ++ show seed
     -- Crear jugadores
+    {-
     let player0 = cpuRand "Walter White"
     let player1 = cpuRand "Jack Black"
     --Jugar
     execute fiveFieldKonoIni [player0,player1] seed
+    -}
+    configAndExecute fiveFieldKonoIni seed "FiveFieldKono"
