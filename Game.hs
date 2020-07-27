@@ -4,7 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
-
+import System.IO
 {- 
     Se define la clase Game, para que algo sea instancia de Game
     debe tener definidas las siguientes funciones:
@@ -124,3 +124,39 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+{-
+    configAndExecute se encarga de obtener el nombre de los jugadores y el tipo(cpuRand,cpuEval,human)
+    Al igual que execute requiere que s sea de clase Show y Game
+    Recibe un Game, el nombre del juego(el cual tiene que estar definido para cada juego) y un Int que funciona como semilla aleatoria
+-}
+configAndExecute :: (Show s, Game s) => s -> String -> Int -> IO Int
+configAndExecute st game_name seed = do
+    -- Se obtiene el nombre del usuario 
+    putStrLn "\nHola jugador 0!, ingrese su nombre: "
+    player0_name <- getLine
+    -- Se pregunta por el tipo de jugador(cpuEval,cpuRand,human)
+    putStrLn "Seleccion el tipo de jugador:\n1)cpuRand\n2)cpuEval(solo disponible en Fox and Hounds)\n3)human"
+    player0_type <- getLine
+    --Dependiendo de la opcion que escoga el usuario se asignara al player el tipo y el nombre que acaba de entregar
+    let player0 = if player0_type == "1" 
+                    then cpuRand player0_name 
+                    else 
+                        if player0_type == "2"
+                            then cpuRand player0_name 
+                            else human player0_name
+    -- Proceso similar al anterior pero ahora con el jugador 2
+    putStrLn "\nHola jugador 1!, ingrese su nombre: "
+    player1_name <- getLine
+    putStrLn "Seleccion el tipo de jugador:\n1)cpuRand\n2)cpuEval(solo disponible en Fox and Hounds)\n3)human"
+    player1_type <- getLine
+    let player1 = if player1_type == "1" 
+                    then cpuRand player1_name
+                    else 
+                        if player1_type == "2"
+                            then cpuRand player1_name 
+                            else human player1_name
+    -- Se obtiene el numero del jugador ganador
+    winner <- execute st [player0,player1] seed
+    -- Aqui es donde se crea el historial de partidas el cual lo guardara en el archivo correspondiente(Ej: foxhounds_historial.txt)
+    appendFile (game_name ++ "_historial.txt") (player0_name ++ " " ++ player1_name ++ " " ++ "Jugador" ++ show winner)
+    return winner
