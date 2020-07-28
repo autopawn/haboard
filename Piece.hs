@@ -69,4 +69,3 @@ drawBoard (sizeX,sizeY) drawf = let
     -- Dibujar el resto del tablero
     drawLine y    = show y ++ "\t" ++ concat [drawf (x,y) | x<-[0..sizeX-1]] ++ "\n"
     in concatMap drawLine [-1..sizeY-1]
-
