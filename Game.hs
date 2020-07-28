@@ -113,6 +113,10 @@ loop st players (r:rs) = do
     -- Comprobar si existe ganador
     let win = winner st moves
     case win of
+        Just 2 -> do
+            -- Un empate
+            putStrLn $ "Empate"
+            return 2
         Just n -> do
             -- Terminar el juego
             let (Player name _) = players !! n
