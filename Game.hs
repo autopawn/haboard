@@ -4,6 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -124,3 +125,32 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
+--Funcion utilizado para obtener el tipo del jugador gracias al input
+tipoJugador :: String -> String -> Player s --Recibe dos String y regresa un Player
+tipoJugador tipo jugador = case tipo of --Segun el tipo se regresa el player
+    "human" -> human jugador
+    "cpuRand" -> cpuRand jugador
+
+configAndExecute :: (Show s, Game s) => s -> Int -> String -> IO Int
+configAndExecute init seed gameName = do --Parametros de configAndExecute
+    --Se reciben los nombres y tipos
+    putStrLn "Ingrese el nombre del jugador 1"
+    jugador1 <- getLine
+    putStrLn "Ingrese el tipo del jugador 1 (human o cpuRand)"
+    tipo1 <- getLine
+    putStrLn "Ingrese el nombre del jugador 2"
+    jugador2 <- getLine
+    putStrLn "Ingrese el tipo del jugador 2 (human o cpuRand)"
+    tipo2 <- getLine
+    --Se redefine el tipo gracias a tipoJugador
+    let player1 = tipoJugador tipo1 jugador1
+    let player2 = tipoJugador tipo2 jugador2
+    --Se ejecuta el juego (y obtenemos al ganador)
+    winner <- execute init [player1, player2] seed
+    --Creamos (si no esta creado) el archivo <nombreDelJuego>.txt y añadimos los nombres de ambos jugadores y al ganador
+    appendFile (gameName ++ ".txt") (jugador1 ++ " " ++ jugador2 ++ " " ++ show winner ++ "\n")
+    --Retornamos al ganador
+    return winner 
+
+
