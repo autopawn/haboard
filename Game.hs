@@ -43,13 +43,13 @@ human name = let
         -- Imprimir movimientos disponibles
         print (map fst mvs)
         -- Recibir el comando
-        putStrLn "Input:"
+        putStrLn "Movimiento:"
         cmd <- getLine
         -- Comprobar validez del comando y retornarlo de ser válido
         case lookup cmd mvs of
             Just st2 -> return (cmd,st2)
             Nothing  -> do
-                putStrLn "Invalid command!"
+                putStrLn "Jugada Inválida!"
                 askCommand st mvs r
     in Player name askCommand
 
@@ -116,7 +116,7 @@ loop st players (r:rs) = do
         Just n -> do
             -- Terminar el juego
             let (Player name _) = players !! n
-            putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            putStrLn $ name++" ha ganado!"
             return n
         Nothing -> do
             -- Continuar jugando
