@@ -46,7 +46,7 @@ human name = let
         putStrLn "Input:"
         cmd <- getLine
         -- Comprobar validez del comando y retornarlo de ser válido
-        case lookup cmd mvs of
+        case lookup cmd mvs of --comprueba buscando el comando en la lista de movimientos (diccionario)
             Just st2 -> return (cmd,st2)
             Nothing  -> do
                 putStrLn "Invalid command!"
@@ -77,16 +77,18 @@ argmaxs xs = [i | (x,i) <- zip xs [0..], x >= maximum xs]
 cpuEval :: (Game s) => String -> (s -> Float) -> Player s
 cpuEval name eval = let
     pickCommand st mvs r = do
-        -- Encontrar que jugador soy
+        -- Encontrar que jugador soy (0 o 1) depende de en que instancia me encuentro
         let me = current st
         -- Función de evaluación para cualquier estado s, negada si cambia el jugador
         let eval2 s = if current s == me then eval s else (-1) * eval s
         -- Índices de los mejores movimientos
-        let bestis = argmaxs (map (\(cmd,s) -> eval2 s) mvs)
+        let bestis = argmaxs (map (\(cmd,s) -> eval2 s) mvs) --cmd en fomato a1c2
         -- Elegir aleatoriamente uno de los mejores movimientos
-        let pick = bestis !! (r `mod` length bestis)
+        let pick = bestis !! (r `mod` length bestis)-- variable !! algo es como variable[algo] en c
         return (mvs !! pick)
     in Player name pickCommand
+
+
 
 
 ------------------------------------------
@@ -104,11 +106,12 @@ execute st players seed = do
     let gen   = mkStdGen seed
     let rands = randoms gen
     -- Ejecutar el loop del juego
-    loop st players rands
+    loop st players rands--funcion loop
 
-loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int
+loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int 
+--la lista de enteros son los rands(numeros aleatorios)
 loop st players (r:rs) = do
-    print st
+    print st --imprime el estado
     let moves = movements st
     -- Comprobar si existe ganador
     let win = winner st moves
@@ -123,4 +126,5 @@ loop st players (r:rs) = do
             let c = current st
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
+            --vuelve a llamar a la funcion de loop para que inicie otro ciclo del juego
             loop st2 players rs

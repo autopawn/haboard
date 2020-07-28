@@ -45,6 +45,8 @@ moveName (xi,yi) (xf,yf) = let
     syf = show yf
     in (cxi:syi) ++ (cxf:syf)
 
+
+
 {-
     playerPieces sirve para saber que piezas pertenecen al jugador.
     Recibe la lista de piezas y un Int correspondiente a la id del jugador.
