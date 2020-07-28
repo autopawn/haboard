@@ -4,6 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -124,3 +125,26 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
+configAndExecute::(Show s, Game s) => s -> Int -> String -> IO Int
+configAndExecute s seed game_name = do
+    {-Se procede a pedir el nombre y tipo de jugador a cada uno de los 2 
+    y se lleva a la funcion parse-}
+    putStrLn "Jugador 1, ingrese su nombre: "
+    nombre1 <- getLine
+    putStrLn "Ingrese su tipo (human o cpuRand): "
+    tipo1 <- getLine
+    let player1 = parse tipo1 nombre1
+    putStrLn "Jugador 2, ingrese su nombre: "
+    nombre2 <- getLine
+    putStrLn "Ingrese su tipo (human o cpuRand): "
+    tipo2 <- getLine
+    let player2 = parse tipo2 nombre2
+    end <- execute s [player1,player2] seed
+    appendFile (game_name ++".txt") (nombre1++" "++nombre2++" "++show end++"\n")
+    return end
+
+parse:: String -> String -> Player s --entrega el tipo de Player con el cual se jugara
+parse tipo nombre
+    | tipo == "human" = human nombre
+    | tipo == "cpuRand" = cpuRand nombre
