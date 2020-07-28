@@ -4,6 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -88,10 +89,22 @@ cpuEval name eval = let
         return (mvs !! pick)
     in Player name pickCommand
 
-
+playerId :: [String] -> Player s --Se utiliza esta función para obtener el tipo del jugador
+playerId lista -- lista [tipo,nombre]
+    | lista !! 0 == "humano" = human (lista !! 1)
+    | lista !! 0 == "cpuRandom" = cpuRand (lista !! 1)
 ------------------------------------------
-
-
+configAndExecute :: (Show s, Game s) => s -> Int -> IO Int
+configAndExecute si seed = do
+    putStrLn "Ingrese 1er jugador: "
+    player1 <- getLine
+    putStrLn "Ingrese 2do jugador: "
+    player2 <- getLine
+    let lplayer1 = (words player1) --lplayer 1 es una lista con el tipo y el nombre del jugador 1
+    let lplayer2 = (words player2) --lplayer 2 es una lista con el tipo y el nombre del jugador 2
+    let jugador1 = (playerId lplayer1)
+    let jugador2 = (playerId lplayer2)
+    execute si [jugador1,jugador2] seed --Llama a la función execute con los atributos de los jugadores
 {-
     execute es la función que corre el juego.
     Requiere que s (el estado del juego) sea de clase Show y Game.
@@ -117,6 +130,11 @@ loop st players (r:rs) = do
             -- Terminar el juego
             let (Player name _) = players !! n
             putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            let perdedor = if n == 0 then 1 else 0 --Se saca el indice del jugador perdedor
+            let (Player jugadorperdedor _) = players !! perdedor --jugadorperdedor es el NOMBRE del jugador que perdió
+            putStrLn "Ingrese el nombre del archivo donde se va a guardar el resultado del juego:  " 
+            archivo <- getLine
+            appendFile archivo $ name++" "++jugadorperdedor++" "++name++"\n\n" --appendFile escribe un archivo nuevo o escribe en uno ya existente
             return n
         Nothing -> do
             -- Continuar jugando
