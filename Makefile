@@ -1,4 +1,4 @@
-COMMON_SOURCES = Game.hs Piece.hs
+COMMON_SOURCES = Game.hs Piece.hs PieceHare.hs
 
 foxhounds:
 	mkdir -p bin
@@ -7,3 +7,8 @@ foxhounds:
 fivefieldkono:
 	mkdir -p bin
 	ghc $(COMMON_SOURCES) FiveFieldKono.hs -o bin/fivefieldkono
+
+harehounds:
+	mkdir -p bin
+	ghc $(COMMON_SOURCES) HareAndHounds.hs -o bin/harehounds
+
