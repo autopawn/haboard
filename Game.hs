@@ -3,6 +3,7 @@
 module Game where
 
 import Data.Maybe (Maybe)
+import Piece
 import System.Random (mkStdGen,randoms)
 
 {- 
@@ -90,8 +91,6 @@ cpuEval name eval = let
 
 
 ------------------------------------------
-
-
 {-
     execute es la función que corre el juego.
     Requiere que s (el estado del juego) sea de clase Show y Game.
@@ -116,7 +115,11 @@ loop st players (r:rs) = do
         Just n -> do
             -- Terminar el juego
             let (Player name _) = players !! n
-            putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            -- Caso de empate
+            if (n == 2) 
+            then putStrLn $ "Tie"
+            -- Caso de ganador 
+            else putStrLn $ "Jugador"++show n++" "++name++" ganó!"
             return n
         Nothing -> do
             -- Continuar jugando

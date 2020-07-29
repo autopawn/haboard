@@ -90,7 +90,7 @@ main = do
     let seed = head (randoms gen)
     putStrLn $ "Seed: " ++ show seed
     -- Crear jugadores
-    let player0 = cpuRand "Son"
+    let player0 = human "Son"
     let player1 = cpuEval "Father" foxAndHoundsEval
     -- Jugar
     execute foxAndHoundsIni [player0,player1] seed
