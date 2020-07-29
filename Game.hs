@@ -3,7 +3,6 @@
 module Game where
 
 import Data.Maybe (Maybe)
-import Piece
 import System.Random (mkStdGen,randoms)
 
 {- 

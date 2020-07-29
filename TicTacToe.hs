@@ -182,7 +182,6 @@ isCurrentPlayerWin (TicTacToe c pc) (xf,yf)
 
 ticTacToeEval :: TicTacToe -> Float
 ticTacToeEval (TicTacToe c pcs) = let
-    o@(_,ox,oy,_) = head (filter (\(p,_,_,_) -> p == 0) pcs)
     value = sum [if isCurrentPlayerWin (TicTacToe c pcs) (xf,yf) then 0.5
             else if isEnemyPlayerWin (TicTacToe c pcs) (xf,yf) then 0.5
             else 0.05 |  (p,xf,yf,k) <- pcs, p==1]
