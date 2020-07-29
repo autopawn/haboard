@@ -108,7 +108,7 @@ pieceMoves (ConnectFour c pcs) (p,x,y,k) = let
 
 -- se inicializa el tablero vacio
 connectFourIni :: ConnectFour
-connectFourIni = ConnectFour 0 [(0,0,5,'A'),(1,6,5,'B')]
+connectFourIni = ConnectFour 0 []
 
 -- se define como se transforma un ConnectFour a String
 
