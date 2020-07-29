@@ -13,7 +13,7 @@ type Piece = (Int,Int,Int,Char) -- (jugador, coordenada x, coordenada y, tipo)
 
 {-
     movePiece sirve para cambiar la posición de una pieza.
-    Recibe una posición inicial, una posicipon final y la lista de piezas.
+    Recibe una posición inicial, una posición final y la lista de piezas.
     Retorna la lista de piezas actualizada.
 -}
 movePiece :: (Int,Int) -> (Int,Int) -> [Piece] -> [Piece]
