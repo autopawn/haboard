@@ -9,7 +9,7 @@ import System.Random (mkStdGen,randoms)
     Se define la clase Game, para que algo sea instancia de Game
     debe tener definidas las siguientes funciones:
     - current que toma un Game y devuelve un Int (usualmente se refiere al jugador)
-    - winner que toma un Game y una lista de movimientos y retorna un Just Int si 
+    - winner que toma un Game y una lista de movimientos y retorna un Just Int si
       encuentra ganador o Nothing en caso contrario
     - movements que retorna una lista de movimientos
 -}
@@ -21,7 +21,7 @@ class Game s where
 
 
 {-
-    Se define el tipo Player que requiere un String y una función para seleccionar 
+    Se define el tipo Player que requiere un String y una función para seleccionar
     movimientos.
     La función toma el estado de un Game, una lista de movimientos, un Int y retorna
     un movimiento.
@@ -54,7 +54,7 @@ human name = let
     in Player name askCommand
 
 {-
-    cpuRand corresponde a una CPU que elige un movimiento al azar de los movimientos 
+    cpuRand corresponde a una CPU que elige un movimiento al azar de los movimientos
     posibles de la CPU.
 -}
 
