@@ -113,10 +113,13 @@ loop st players (r:rs) = do
     -- Comprobar si existe ganador
     let win = winner st moves
     case win of
+        
         Just n -> do
-            -- Terminar el juego
             let (Player name _) = players !! n
-            putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            if (n == 3)
+            then putStrLn $ "¡Es un empate!"
+            else putStrLn $ "Jugador"++show n++" "++name++" ganó!"
+            -- Terminar el juego
             return n
         Nothing -> do
             -- Continuar jugando
