@@ -26,6 +26,27 @@ movePiece (xi,yi) (xf,yf) pcs =
     Retorna una pieza o Nothing en caso de no haber una pieza en la posición consultada.
 -}
 
+-- removePiece elimina la pieza de la lista
+removePiece :: (Int,Int) -> [Piece] -> [Piece]
+removePiece (px,py) pcs =
+    [(p,x,y,k) | (p,x,y,k) <- pcs, (x,y)/=(px,py)]
+
+-- dentro revisa si la posicion final está dentro del tablero
+dentro :: (Int,Int) -> (Int,Int) -> Bool
+dentro (x,y) (sx,sy) = if (x>=0 && y>=0 && x<sx && y<sy) then True else False
+
+-- playerAt revisa si la pieza X es del jugador actual
+playerAt :: [Piece] -> (Int,Int) -> Int
+playerAt pcs (x,y) = case pieceAt (x,y) pcs of
+    Just (j,_,_,_) -> j
+    Nothing        -> -1
+
+-- addQueen agrega una reina a la lista en la posicion de llegada
+addQueen :: [Piece] -> Piece -> [Piece]
+addQueen pcs np = np : pcs
+
+
+
 pieceAt :: (Int,Int) -> [Piece] -> Maybe Piece
 pieceAt (xi,yi) pcs = let
     pcs2 = filter (\(p,x,y,k) -> (x,y)==(xi,yi)) pcs
