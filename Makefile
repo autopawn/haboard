@@ -7,3 +7,7 @@ foxhounds:
 fivefieldkono:
 	mkdir -p bin
 	ghc $(COMMON_SOURCES) FiveFieldKono.hs -o bin/fivefieldkono
+
+tictactoe:
+	mkdir -p bin
+	ghc $(COMMON_SOURCES) TicTacToe.hs -o bin/tictactoe

@@ -16,9 +16,30 @@ type Piece = (Int,Int,Int,Char) -- (jugador, coordenada x, coordenada y, tipo)
     Recibe una posición inicial, una posicipon final y la lista de piezas.
     Retorna la lista de piezas actualizada.
 -}
+
 movePiece :: (Int,Int) -> (Int,Int) -> [Piece] -> [Piece]
 movePiece (xi,yi) (xf,yf) pcs =
-    [if (x,y)==(xi,yi) then (p,xf,yf,k) else (p,x,y,k) | (p,x,y,k) <- pcs]
+    [
+    if (x,y)==(xi,yi) 
+    then (p,xf,yf,k)
+    else (p,x,y,k) 
+    | (p,x,y,k) <- pcs
+    ]
+
+{-
+    putMark sirve para mover un pieza de fuera del tablero y colocarla dentro de el. 
+    La columna (3,y) contiene a las piezas del jugador 0 y (4,y) las del jugador 1.
+    Funciona como movePiece pero restringe que para mover la pieza, las posiciones iniciales deben provenir de fuera del tablero.
+-}
+
+putMark :: (Int,Int) -> (Int,Int) -> [Piece] -> [Piece]
+putMark (xi, yi) (xf,yf) pcs =
+    [
+    if ((x,y) == (xi, yi)) && (xi == 3 || xi == 4)
+    then (p,xf,yf,k)
+    else (p,x,y,k)
+    | (p,x,y,k) <- pcs
+    ]
 
 {-
     pieceAt sirve para saber que pieza está en una posición.
