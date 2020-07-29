@@ -39,8 +39,8 @@ instance Game FoxAndHounds where
     Retorna el un movimiento, consistente de su nombre y el estado que genera.
 -}
 
-pieceMoves :: FoxAndHounds -> Piece -> [(String,FoxAndHounds)]
-pieceMoves (FoxAndHounds c pcs) (p,x,y,k) = let
+pieceMoves :: FoxAndHounds -> Piece -> [(String,FoxAndHounds)] 
+pieceMoves (FoxAndHounds c pcs) (p,x,y,k) = let 
     -- Posiciones posibles dependiendo del tipo de pieza
     steps
         | k=='H'  = [(x+1,y+1),(x-1,y+1)]
@@ -69,16 +69,27 @@ instance Show FoxAndHounds where
 
 {-
     foxAndHoundsEval corresponde a la función de evaluación que usa cpuEval.
-    Recibe un estado del jeugo.
+    Recibe un estado del juego.
     Retorna la evaluación del estado.
 -}
 
 foxAndHoundsEval :: FoxAndHounds -> Float
 foxAndHoundsEval (FoxAndHounds c pcs) = let
-    fI = fromIntegral
-    fox@(_,fx,fy,_) = head (filter (\(p,_,_,_) -> p == 0) pcs)
-    houndsum = sum [if y>=fy then 0.5 else 0.05 * abs (fI x - fI fx) | (p,x,y,k) <- pcs, p==1]
-    in (houndsum + 7 - fI fy) * (if c==0 then 1.0 else -1.0)
+    --primero se filtra pcs para tomar de la lista pcs solo los estados del fox
+    pc = filter (\(p,_,_,_) -> p == 0) pcs
+    --se llama a pieceMoves para generar los posibles movimientos, como los datos salen sucios y se necesita solo los estados, pasa por uniones de listas foldl y filtros para obtener los mobvimientos posibles del fox
+    dirtyMoves = map (pieceMoves (FoxAndHounds c pcs)) pc
+    setMoves = foldl (++) [] dirtyMoves
+    stateMoves = map (snd) setMoves
+    allMoves = [m |(FoxAndHounds c m) <- stateMoves]
+    listMoves = foldl (++) [] allMoves   
+    foxMoves = filter (\(p,_,_,_) -> p== 0) listMoves
+    --estos terminos end es para saber si algun movimineto llego a la meta terminando la recursion del arbol en in, y si no, entregamos a newFoxAndHounds como nuevo tipo de datos FoxAndHounds
+    end = filter (\(_,_,y,_) -> y == 0) foxMoves
+    hounds = filter (\(p,_,_,_) -> p == 1) pcs
+    newFoxAndHounds = FoxAndHounds c (foxMoves ++ hounds) 
+    -- in retorna un float que depende de la condicion del arbol
+    in (1.0 + (if ((length foxMoves) > 500) then 10.0 else if (null end) then (foxAndHoundsEval (newFoxAndHounds)) else 1.0))*(if c==0 then 1.0 else -1.0)
 
 -- Main.
 
