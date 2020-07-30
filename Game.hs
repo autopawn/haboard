@@ -4,6 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -77,6 +78,7 @@ argmaxs xs = [i | (x,i) <- zip xs [0..], x >= maximum xs]
 cpuEval :: (Game s) => String -> (s -> Float) -> Player s
 cpuEval name eval = let
     pickCommand st mvs r = do
+        print ("hola")
         -- Encontrar que jugador soy
         let me = current st
         -- Función de evaluación para cualquier estado s, negada si cambia el jugador
@@ -124,3 +126,57 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
+{- Se crea un nuevo jugador.-}
+new_player_1 ::  (Game s) => String-> String -> (s-> Float) -> String->  Player s
+new_player_1 nombre tipo eval name_game
+    |tipo == "3" = human nombre
+    |tipo == "2" && name_game == "fox and hounds" = cpuEval nombre eval -- evita tomar una funcion cpuEval de five field kono,
+    |otherwise = cpuRand nombre                                         -- que existe pero fue copiada de fox and hound solo para que no me lanzara error
+                                                                        -- no pude soluciar el problema sin recurrir a ese trucazo...                                    
+{- Esta funcion pide el tipo y evita que ingresen un tipo erroneo.-}
+
+
+get_tipo :: IO String
+get_tipo = do
+    putStrLn "\n Ingrese tipo de jugador, 1 para cpuRand , 2 para cpuEval (solo en FoxAndHounds) y 3 para humano . \n"
+    tipo <- getLine
+    if (tipo == "1" || tipo == "2" || tipo == "3")
+        then return tipo 
+        else get_tipo
+{-
+    Funcion que nos piden, pide los nombres y tipos por consola y apartir de ello se encarga de generar
+    los jugadores, sigue con el llamago a la funcion execute y crea/modifica el archivo historial que nos pidan.
+-}
+configAndExecute :: (Show s, Game s) => s -> Int -> String -> (s->Float) -> IO Int
+configAndExecute s seed name_game eval = do
+
+    putStrLn "\n Ingrese el nombre del jugador 1 \n"
+    nombre_1 <- getLine
+    tipo_1 <- get_tipo
+    putStrLn "\n Ingrese el nombre del jugador 2 \n"
+    nombre_2 <- getLine
+    tipo_2 <- get_tipo
+
+    let jugador_1 = new_player_1 nombre_1 tipo_1 eval name_game
+    let jugador_2 = new_player_1 nombre_2 tipo_2 eval name_game
+
+    let players = [jugador_1,jugador_2]
+
+    {-
+        Se ejecuta execute sin problemas y obtenemos el numero del jugador que gano.
+    -}
+    n <- execute s players seed
+    
+    let a = n+1
+
+    let (Player name _) = players !! n
+
+    putStrLn "\n Ingrese el nombre del historial donde se guardara:\n"
+    n_historial <- getLine
+    {-
+        Se crea o modifica el historia, si esque este existe o no.
+    -}
+    appendFile (n_historial++".txt") (nombre_1 ++ "--" ++ nombre_2 ++ ".El jugador " ++ show a ++ " " ++ name ++ " gano en "++ name_game ++ "\n.")  
+
+    return n

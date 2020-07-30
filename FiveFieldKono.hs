@@ -86,18 +86,31 @@ instance Show FiveFieldKono where
 fiveFieldKonoIni :: FiveFieldKono
 fiveFieldKonoIni = FiveFieldKono 0 [(p,x,y,'K') |
     x<-[0..boardX-1], y<-[0..boardY-1], let p = inStartPos (x,y), p>=0]
+{-
+    Esta funcion solo existe para evitarme un error, lo que hace no tiene nada relevante, incluso es una copia de 
+    la funcion eval de fox and hounds. ya que al no tener una funcion eval propia tuve que "crear" una funcion para 
+    que no me diera error, pero al momento de generar los jugadores no tomara encuenta esta funcion 
+    y eligira una cpu random en su lugar.
+-}
+fiveFieldKonoEval :: FiveFieldKono -> Float
+fiveFieldKonoEval (FiveFieldKono c pcs) = let
+    fI = fromIntegral
+    fox@(_,fx,fy,_) = head (filter (\(p,_,_,_) -> p == 0) pcs)
+    houndsum = sum [if y>=fy then 0.5 else 0.05 * abs (fI x - fI fx) | (p,x,y,k) <- pcs, p==1]
+    in (houndsum + 7 - fI fy) * (if c==0 then 1.0 else -1.0)
 
 -- Main.
 
 main :: IO Int
 main = do
-    -- Inicialización del generador de números aleatorios
+    {-
+        Creo gen para poder usarla en la funcion fivefieldkono.
+    -}
     gen <- getStdGen
     -- Semilla aleatoria que se usará para el juego
     let seed = head (randoms gen)
     putStrLn $ "Seed: " ++ show seed
-    -- Crear jugadores
-    let player0 = cpuRand "Walter White"
-    let player1 = cpuRand "Jack Black"
-    --Jugar
-    execute fiveFieldKonoIni [player0,player1] seed
+    {-
+        Se llama a la funcion que nos piden.
+    -}
+    configAndExecute fiveFieldKonoIni seed "five Fiel dKono" fiveFieldKonoEval
