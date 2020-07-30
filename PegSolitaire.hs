@@ -14,9 +14,9 @@ instance Game PegSolitaire where
     current (PegSolitaire c _) = c
 
     winner (PegSolitaire c pc) mvs
-        -- Si el jugador se queda sin movimientos, el jugador pierde
-        | (length pc) == 1  = Just 0
         -- Si queda solo una pieza en el tablero, el jugador gana
+        | (length pc) == 1  = Just 0
+        -- Si el jugador se queda sin movimientos, el jugador pierde
         | null mvs          = Just 1
         -- En otro caso se sigue jugando
         | otherwise      = Nothing
