@@ -78,7 +78,6 @@ argmaxs xs = [i | (x,i) <- zip xs [0..], x >= maximum xs]
 cpuEval :: (Game s) => String -> (s -> Float) -> Player s
 cpuEval name eval = let
     pickCommand st mvs r = do
-        print ("hola")
         -- Encontrar que jugador soy
         let me = current st
         -- Función de evaluación para cualquier estado s, negada si cambia el jugador
