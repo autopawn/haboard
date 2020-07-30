@@ -5,6 +5,9 @@ module Game where
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
 
+import System.IO
+import System.Directory
+
 {- 
     Se define la clase Game, para que algo sea instancia de Game
     debe tener definidas las siguientes funciones:
@@ -90,8 +93,6 @@ cpuEval name eval = let
 
 
 ------------------------------------------
-
-
 {-
     execute es la función que corre el juego.
     Requiere que s (el estado del juego) sea de clase Show y Game.
@@ -105,6 +106,44 @@ execute st players seed = do
     let rands = randoms gen
     -- Ejecutar el loop del juego
     loop st players rands
+
+
+configAndExecute :: (Show s, Game s) => s -> Int -> String -> IO Int
+configAndExecute game seed gameName = do
+-------------------------------------------------------------------
+    putStrLn "ingrese el Nombre del jugador 0"
+    name0 <- getLine
+    type0 <- choiceType
+------------------------------------------------------------------
+    putStrLn "\n ingrese el Nombre del jugador 1"
+    name1 <- getLine
+    type1 <- choiceType
+-------------------------------------------------------------------
+    let player0 = makePlayer type0 name0
+    let player1 = makePlayer type1 name1
+
+    winner <- execute game [player0,player1] seed
+    putStrLn "\n Ingrese el Nombre del archivo donde guardar los resultados"
+    historyname <- getLine
+    appendFile (historyname++".txt") (name0 ++ " " ++ name1 ++ " jugador " ++ show winner ++ "\n")
+    return winner
+
+
+makePlayer :: String -> String -> Player s
+makePlayer form name
+    | form == "1" = human name
+    | form == "2" = cpuRand name
+    | form == "3" = cpuRand name
+    | otherwise = error "Seleccion invalida, intente nuevamente\n"{- choiceType-}
+    
+
+
+choiceType :: IO String
+choiceType = do
+    putStrLn "Que tipo de jugador es"
+    putStrLn "1- Human\n 2- CpuRandom\n 3- CpuEval (Solo Disponible en FoxAndHounds)\n"
+    form <- getLine
+    return form
 
 loop :: (Show s, Game s) => s -> [Player s] -> [Int] -> IO Int
 loop st players (r:rs) = do
