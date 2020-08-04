@@ -4,6 +4,7 @@ module Game where
 
 import Data.Maybe (Maybe)
 import System.Random (mkStdGen,randoms)
+import System.IO
 
 {- 
     Se define la clase Game, para que algo sea instancia de Game
@@ -124,3 +125,36 @@ loop st players (r:rs) = do
             let (Player _ pchoice) = players !! c
             (cmd,st2) <- pchoice st moves r
             loop st2 players rs
+
+configAndExecute :: (Show s, Game s) => s -> Int -> String -> IO Int
+configAndExecute juego seed nombre = do 
+    putStrLn "Ingrese nombre de jugador_1 : " {-se pide el nombre del jugador-}
+    nombre_jugador_1 <- getLine
+    putStrLn "Ingrese tipo de jugador_1 :\n1) cpuRand\n2)cpuEval\n3)human\n "{-se pide que ingrese el tipo de jugador con un numero asociado respectivamente-}
+    tipo_jugador_1 <- getLine
+    {-se hace un guard para asociar la opcion del tipo de jugador y lo crea con su respectivo nombre y tipo-}
+
+    let jugador_1 | tipo_jugador_1 == "1" = cpuRand nombre_jugador_1
+                  | tipo_jugador_1 == "2" = cpuRand nombre_jugador_1
+                  | tipo_jugador_1 == "3" = human nombre_jugador_1
+
+    {-se hace lo mismo para el jugador 2-}
+    putStrLn "Ingrese nombre de jugador_2 : "
+    nombre_jugador_2 <- getLine
+    putStrLn "Ingrese tipo de jugador_2 : \n1) cpuRand\n2)cpuEval\n3)human\n "
+    tipo_jugador_2 <- getLine
+
+
+    let jugador_2 | tipo_jugador_2 == "1" = cpuRand nombre_jugador_2
+                  | tipo_jugador_2 == "2" = cpuRand nombre_jugador_2
+                  | tipo_jugador_2 == "3" = human nombre_jugador_2
+
+    {-se utiliza la funcion Execute original para obtener el indice del ganador-}
+    winner <- execute juego [jugador_1,jugador_2] seed
+
+    appendFile (nombre ++ ".txt") (nombre_jugador_1 ++" "++ nombre_jugador_2 ++ " " ++" Ganador : " ++ show winner)
+    {-al igual que en el proyecto historial de java se retorna el ganador utilizando la funcion original(metodo de la clase padre en java) en la funcion-}
+
+    return winner
+
+    
